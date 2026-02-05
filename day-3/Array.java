@@ -41,6 +41,7 @@ public class Array{
         System.out.println("------------ float array ------------");
         float userFloat[] = new float[5];
         Getter arrHelper = new Getter(userFloat);
+        scanner.close();
         arrHelper.get();
 
 

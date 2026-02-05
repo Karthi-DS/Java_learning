@@ -1,12 +1,11 @@
-import java.io.*;
+
 
 interface testInterface{
     final int a = 10; // default public final will be added
 }
 
-public class Interface implements testInterface{
+public class Interface{
     public static void main(String[] args){
-        Interface cls = new Interface();
-        System.out.println(cls.a);
+        System.out.println(testInterface.a);
     }
 }
