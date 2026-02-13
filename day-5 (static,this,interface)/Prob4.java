@@ -9,6 +9,6 @@ public class Prob4 {
         System.out.println("hi..");
     }
     public static void main(String[] args) {
-        Prob4 obj = new Prob4(); //prints hi;
+        // Prob4 obj = new Prob4(); //prints hi;
     }
 }
