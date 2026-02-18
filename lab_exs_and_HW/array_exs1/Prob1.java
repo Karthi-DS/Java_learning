@@ -1,4 +1,4 @@
-package lab_exs.array_exs1;
+package lab_exs_and_HW.array_exs1;
 
 import pk.Array;
 import java.util.Scanner;
