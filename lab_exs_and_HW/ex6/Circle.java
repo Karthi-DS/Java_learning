@@ -10,6 +10,7 @@ public class Circle extends TwoDShapes {
     }
 
     double getArea(){
+        this.displayInfo();
         return this.pie*Math.pow(radius, 2);
     }
 }

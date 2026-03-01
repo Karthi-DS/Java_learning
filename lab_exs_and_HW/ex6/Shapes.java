@@ -10,7 +10,7 @@ public class Shapes {
         this.sno = count;
     }
 
-    void displayInfo(){
+    public void displayInfo(){
         System.out.printf("Sno: %d\nColor: %s\n Name: %s\n",this.sno,this.color,this.name);
     }
 
