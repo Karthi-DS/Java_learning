@@ -23,7 +23,7 @@ interface MammalInterface extends AnimalInterface{
     }
 }
 
-public class Prob3 implements MammalInterface{
+class Prob implements MammalInterface{
 
     public void print(){
         System.out.println("show method");
@@ -42,3 +42,11 @@ public class Prob3 implements MammalInterface{
         System.out.println("animal count: "+ obj.animalCount);
     }
 }
+
+public class Prob3 extends Prob{
+    public static void main(String args[]){
+        Prob obj = new Prob3();
+        obj.method();
+    }
+}
+

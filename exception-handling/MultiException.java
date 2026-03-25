@@ -2,10 +2,10 @@ class MultiException{
     int c;
     MultiException(int a,int b){
         try {
-            c = a/b;
-        } catch (Exception e) {
-            e.printStackTrace();
+            if(b==0)throw new ArithmeticException("Exception thrown");
         }catch (ArithmeticException e){
+            System.out.println(e.toString());
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
