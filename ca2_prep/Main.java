@@ -30,10 +30,13 @@ class InventoryManager<T> {
     }
 
     void deleteEle(int index) {
-        if (index <= ll.size())
+        if (index <= ll.size()){
             ll.remove(index);
-        else
+            System.out.println("Product Deleted");
+        }
+        else{
             System.out.println( "Product not found");
+        }
     }
 
     void updateEle(int index, T ele) {
@@ -82,6 +85,25 @@ class Product {
     private double price;
     private Scanner sc;
 
+
+    Product(int i, String n, int q, double p) {
+        this.id = i;
+        this.name = n;
+        this.quantity = q;
+        this.price = p;
+        sc = new Scanner(System.in);
+    }
+
+    public Product(Product p) {
+        this.id = p.id;
+        this.name = p.name;
+        this.quantity = p.quantity;
+        this.price = p.price;
+        sc = new Scanner(System.in);
+    }
+
+    
+
     public int getId(){
         return this.id;
     }
@@ -95,13 +117,7 @@ class Product {
         return this.name;
     }
 
-    Product(int i, String n, int q, double p) {
-        this.id = i;
-        this.name = n;
-        this.quantity = q;
-        this.price = p;
-        sc = new Scanner(System.in);
-    }
+    
 
     public String toString() {
         return "Id: " + this.id + "\nName: " + this.name + "\nQuantity: " + this.quantity + "\nPrice: " + this.price
@@ -266,7 +282,7 @@ public class Main {
 
                     opr.push("update");
                     lastUpdatedIndex = ind;
-                    items.push(im.ll.get(ind));
+                    items.push(new Product(im.ll.get(ind)));
 
                     im.updateEle(ind);
                     break;

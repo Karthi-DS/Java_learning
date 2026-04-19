@@ -1,0 +1,6 @@
+No of characters: 14
+No of vowels: 6
+No of words: 4
+No of Digits: 0
+No of Uppercase Letters: 3
+No of Lowercase Letters: 11
