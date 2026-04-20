@@ -48,11 +48,9 @@ public class Main {
         t2.start();
         t3.start();
 
-        // t1.join();
-        // t2.join();
-        // t3.join();
-
-        // predict the output -- final arrlist...
+        t1.join();
+        t2.join();
+        t3.join();
 
         System.out.println("\nFinal ArrayList:");
         System.out.println(s.arr);
