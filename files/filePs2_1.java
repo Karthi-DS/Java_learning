@@ -1,13 +1,7 @@
-import java.io.Console;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectOutputStream;
-import java.util.Scanner;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.*;
 
+// ---------------- USER CLASS ----------------
 class User implements Serializable {
     private String name;
     private String loginId;
@@ -24,7 +18,7 @@ class User implements Serializable {
     }
 
     public String getLoginId() {
-        return this.loginId;
+        return loginId;
     }
 
     public void updatePhoneNumber(String pn) {
@@ -32,172 +26,193 @@ class User implements Serializable {
     }
 
     public String toString() {
-        return "User Details:\nName: " + this.name + "\nLoginId: " + this.loginId + "\nAadharId: " + this.aadharId
-                + "\nPhone Number: " + this.phoneNumber;
+        return "User Details:\nName: " + name +
+                "\nLoginId: " + loginId +
+                "\nAadharId: " + aadharId +
+                "\nPhone Number: " + phoneNumber + "\n";
     }
 }
 
 public class filePs2_1 {
-    ObjectInputStream ois;
-    ObjectOutputStream oos;
-    FileInputStream fis;
-    FileOutputStream fos;
 
-    public filePs2_1() {
-        init(false);
-    }
+    public ArrayList<User> readData() {
+        ArrayList<User> list = new ArrayList<>();
 
-    public void init(boolean forAppend) {
         try {
-            fis = new FileInputStream("user.dat");
-            ois = new ObjectInputStream(fis);
-            if (forAppend) {
-                fos = new FileOutputStream("user.dat", true);
-            } else {
-                fos = new FileOutputStream("user.dat");
+            File file = new File("user.dat");
+
+            if (!file.exists() || file.length() == 0) {
+                return list; // empty list
             }
-            oos = new ObjectOutputStream(fos);
+
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file));
+            list = (ArrayList<User>) ois.readObject();
+            ois.close();
 
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+
+    public void writeData(ArrayList<User> list) {
+        try {
+            ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("user.dat"));
+            oos.writeObject(list);
+            oos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void writeData(User[] arr, boolean isAppend) {
-        init(isAppend);
-        try {
-            for (User u : arr) {
-                if (u != null)
-                    oos.writeObject(u);
-            }
-            System.out.println("Users Successfully written");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+    public void insertUser(User u) {
+        ArrayList<User> users = readData();
+        users.add(u);
+        writeData(users);
+        System.out.println("User added successfully!");
+    }
+
+    public void displayAll() {
+        ArrayList<User> users = readData();
+
+        if (users.isEmpty()) {
+            System.out.println("No users found.");
+            return;
+        }
+
+        for (User u : users) {
+            System.out.println(u);
         }
     }
 
-    public void readData() {
-        try {
-            init(true);
-            User[] users = (User[]) ois.readObject();
-            for (User u : users) {
-                if (u != null)
-                    System.out.println(u);
+    public void searchById(String id) {
+        ArrayList<User> users = readData();
+        boolean found = false;
+
+        for (User u : users) {
+            if (u.getLoginId().equals(id)) {
+                System.out.println("User Found:\n" + u);
+                found = true;
             }
-        } catch (Exception e) {
-            // TODO: handle exception
+        }
+
+        if (!found) {
+            System.out.println("User not found.");
         }
     }
 
-    public void searchAndUpdateById(String id, boolean isUpdate, String phoneNumber) {
-        init(true);
-        try {
-            User[] users = (User[]) ois.readObject();
-            boolean isFound = false;
-            for (User u : users) {
-                if (u.getLoginId().equals(id)) {
-                    if (!isUpdate) {
-                        System.out.println("Found User with Id: " + id);
-                        System.out.println(u);
-                        isFound = true;
-                    } else {
-                        u.updatePhoneNumber(phoneNumber);
-                        System.out.println("Phone number updated...");
-                    }
-                }
+    public void updatePhone(String id, String phone) {
+        ArrayList<User> users = readData();
+        boolean found = false;
+
+        for (User u : users) {
+            if (u.getLoginId().equals(id)) {
+                u.updatePhoneNumber(phone);
+                found = true;
             }
+        }
 
-            if (!isFound)
-                System.out.println("User not found...");
-
-        } catch (Exception e) {
-            // TODO: handle exception
+        if (found) {
+            writeData(users);
+            System.out.println("Phone number updated successfully!");
+        } else {
+            System.out.println("User not found.");
         }
     }
 
-    public void deleteUserById(String id) {
-        try {
-            User[] users = (User[]) ois.readObject();
-            boolean isFound = false;
+    public void deleteUser(String id) {
+        ArrayList<User> users = readData();
 
-            for (int i = 0; i < users.length; i++) {
-                if (users[i].getLoginId().equals(id)) {
-                    isFound = true;
-                    users[i] = null;
-                }
-            }
+        boolean removed = users.removeIf(u -> u.getLoginId().equals(id));
 
-            if (!isFound) {
-                System.out.println("User not found...");
-                return;
-            }
-            writeData(users, false);
-            System.out.println("User Deleted successfully...");
-
-        } catch (Exception e) {
-            // TODO: handle exception
+        if (removed) {
+            writeData(users);
+            System.out.println("User deleted successfully!");
+        } else {
+            System.out.println("User not found.");
         }
     }
 
     public static void menu() {
-        System.out.println(
-                "\n1. Insert User\n2. Read All User\n3. Read Single User By Id\n4. Update Phone Number By Id\n5. Delete User By Id\nEnter the choice\n");
+        System.out.println("\n1. Insert User");
+        System.out.println("2. Read All Users");
+        System.out.println("3. Search User By Id");
+        System.out.println("4. Update Phone Number");
+        System.out.println("5. Delete User");
+        System.out.println("6. Exit");
+        System.out.print("Enter choice: ");
     }
 
-    public static User promptUser() {
-        System.out.println(
-                "Enter the details of the user in the following order: LoginId, Name, Password, AadharId, PhoneNumber");
-        Scanner sc = new Scanner(System.in);
-        String LoginId = sc.nextLine();
+    public static User promptUser(Scanner sc) {
+        sc.nextLine(); // clear buffer
+
+        System.out.println("Enter LoginId:");
+        String loginId = sc.nextLine();
+
+        System.out.println("Enter Name:");
         String name = sc.nextLine();
+
+        System.out.println("Enter Password:");
         String password = sc.nextLine();
+
+        System.out.println("Enter AadharId:");
         String aadharId = sc.nextLine();
+
+        System.out.println("Enter Phone Number:");
         String phoneNumber = sc.nextLine();
-        return new User(name, LoginId, password, aadharId, phoneNumber);
+
+        return new User(name, loginId, password, aadharId, phoneNumber);
     }
 
     public static void main(String[] args) {
         filePs2_1 obj = new filePs2_1();
         Scanner sc = new Scanner(System.in);
-        int ch;
-        ArrayList<User> users = new ArrayList<>();
 
-        boolean isContinue = true;
-        while (isContinue) {
+        int ch;
+
+        while (true) {
             menu();
             ch = sc.nextInt();
 
             switch (ch) {
                 case 1:
-                    User u = promptUser();
-                    users.add(u);
-                    obj.writeData((User[]) users.toArray(), true);
+                    User u = promptUser(sc);
+                    obj.insertUser(u);
                     break;
+
                 case 2:
-                    obj.readData();
+                    obj.displayAll();
                     break;
+
                 case 3:
-                    System.out.println("Enter the login id of the user to be searched");
+                    System.out.print("Enter LoginId: ");
                     String id = sc.next();
-                    obj.searchAndUpdateById(id, false, "");
+                    obj.searchById(id);
                     break;
+
                 case 4:
-                    System.out.println("Enter the login id of the user to be updated");
-                    String idToUpdate = sc.next();
-                    System.out.println("Enter the new phone number");
-                    String phoneNumber = sc.nextLine();
-                    obj.searchAndUpdateById(idToUpdate, true, phoneNumber);
+                    System.out.print("Enter LoginId: ");
+                    String idUpdate = sc.next();
+                    sc.nextLine(); // fix buffer
+                    System.out.print("Enter new phone number: ");
+                    String phone = sc.nextLine();
+                    obj.updatePhone(idUpdate, phone);
                     break;
+
                 case 5:
-                    System.out.println("Enter the login id of the user to be deleted");
-                    String idToDelete = sc.next();
-                    obj.deleteUserById(idToDelete);
+                    System.out.print("Enter LoginId: ");
+                    String idDelete = sc.next();
+                    obj.deleteUser(idDelete);
                     break;
+
+                case 6:
+                    System.out.println("Exiting...");
+                    return;
+
                 default:
-                    System.out.println("Invalid choice...");
-                    break;
+                    System.out.println("Invalid choice!");
             }
         }
     }
-
 }
